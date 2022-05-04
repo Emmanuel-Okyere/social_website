@@ -1,7 +1,7 @@
 {% extends 'base.html' %} {% block title %}Log-in{% endblock %}{%block content%}
 <h1>Log-in</h1>
 <p>Please , use the following form to login</p>
-<form methode="POST">
+<form method="POST">
   {{form.as_p}} {% csrf_token %}
   <p><input type="submit" value="Login" /></p>
 </form>
