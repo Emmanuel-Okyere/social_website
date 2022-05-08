@@ -9,9 +9,11 @@ https://docs.djangoproject.com/en/4.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
+from django.urls import reverse_lazy
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+
 
 load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -68,6 +70,7 @@ INSTALLED_APPS = [
     'sslserver',
     'easy_thumbnails',
     'images.apps.ImagesConfig',
+    'actions.apps.ActionsConfig',
 ]
 
 MIDDLEWARE = [
@@ -130,6 +133,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+ABSOLUTE_URL_OVERRIDES={
+    "auth.user":lambda u: reverse_lazy("user_detail",args=[u.username])
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
