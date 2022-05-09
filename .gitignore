@@ -304,5 +304,7 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+*.crt
+*.key
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,django,python,windows

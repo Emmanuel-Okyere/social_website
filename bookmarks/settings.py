@@ -9,15 +9,17 @@ https://docs.djangoproject.com/en/4.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
+from django.urls import reverse_lazy
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+
 
 load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 MEDIA_URL = "/media/"
-MEDIA_ROOT = os.path.join(BASE_DIR,'media')
+MEDIA_ROOT = os.path.join(BASE_DIR,'media/')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
@@ -65,7 +67,10 @@ INSTALLED_APPS = [
     'account.apps.AccountConfig',
     'django.contrib.admin',
     'social_django',
-    'django_extensions',
+    'sslserver',
+    'easy_thumbnails',
+    'images.apps.ImagesConfig',
+    'actions.apps.ActionsConfig',
 ]
 
 MIDDLEWARE = [
@@ -128,6 +133,12 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+ABSOLUTE_URL_OVERRIDES={
+    "auth.user":lambda u: reverse_lazy("user_detail",args=[u.username])
+}
+REDIS_HOST = 'localhost'
+REDIS_PORT = 6379
+REDIS_DB = 0
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
