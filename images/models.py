@@ -16,6 +16,7 @@ class Image(models.Model):
     created = models.DateField(db_index=True, auto_now_add=True)
     users_like = models.ManyToManyField(settings.AUTH_USER_MODEL,
     related_name="images_liked", blank = True)
+    total_likes = models.PositiveIntegerField(db_index=True,default=0)
 
     def __str__(self):
         """Returning human readable string"""
@@ -29,4 +30,4 @@ class Image(models.Model):
 
     def get_absolute_url(self):
         """Getting absolute URL"""
-        return reverse("images:detail", args={self.id, self.slug})
+        return reverse("images:detail", args=[self.id, self.slug])

@@ -6,9 +6,11 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.contrib import messages
+from actions.models import Actions
 from bookmarks.common.decorators import ajax_required
 from .forms import LoginForm, UserRegistrationForm,UserEditForm,ProfileEditForm
 from .models import Profile, Contact
+from actions.utils import create_action
 # Create your views here.
 def user_login(request):
     """Creating the user login view"""
@@ -32,7 +34,12 @@ def user_login(request):
 @login_required
 def dashboard(request):
     """User, after login"""
-    return render(request, "account/dashboard.html",{"section":"dashboard"})
+    actions = Actions.objects.exclude(user=request.user)
+    following_ids = request.user.following.values_list("id", flat="true")
+    if following_ids:
+        actions = actions.filter(user_id__in=following_ids)
+        actions =actions.select_related("user","user__profile").prefetch_related("target")[:10]
+    return render(request, "account/dashboard.html",{"section":"dashboard","actions":actions})
 
 def register(request):
     """User registers view"""
@@ -43,6 +50,7 @@ def register(request):
             new_user.set_password(user_form.cleaned_data["password2"])
             new_user.save()
             Profile.objects.create(user = new_user)
+            create_action(new_user,"has created an account")
             return render(request, 'account/register_done.html',{"new_user":new_user})
     else:
         user_form = UserRegistrationForm()
@@ -92,6 +100,7 @@ def user_follow(request):
             if action == "follow":
                 Contact.objects.get_or_create(user_from=request.user,
                 user_to=request.user)
+                create_action(request.user, "is following", user)
             else:
                 Contact.objects.filter(user_from=request.user,
                 user_to=user).delete()
